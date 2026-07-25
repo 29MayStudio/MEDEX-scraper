@@ -164,7 +164,7 @@ class MedSpider(scrapy.Spider):
             [re.sub(r'\s+', ' ', i).strip() for i in response.css('div.package-container ::text').getall()])
         pack_size_info = ','.join(
             [re.sub(r'\s+', ' ', i).strip() for i in response.css('span.pack-size-info ::text').getall() if
-             i.strip() is not ''])
+              i.strip() != ''])
 
         item['package_container'] = package_container
         item['pack_size_info'] = pack_size_info
