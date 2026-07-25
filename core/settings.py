@@ -31,14 +31,9 @@ ALLOWED_HOSTS = []
 
 # custom application
 CUSTOM_APPS = ['crawler',
-               'medexbot',
-               'api', ]
+               'medexbot', ]
 
-PACKAGES = ['rest_framework',
-            'rest_framework.authtoken',
-            'django_filters',
-            'admin_auto_filters',  # https://github.com/farhan0581/django-admin-autocomplete-filter
-            ]
+PACKAGES = []
 
 # Application definition
 
@@ -159,19 +154,3 @@ STATIC_URL = '/static/'
 
 # DATA_UPLOAD_MAX_NUMBER_FIELDS = 20240 # higher than the count of fields
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.jangoModelPermissionsOrAnonReadOnly'
-#     ]
-# }
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10,
-}
