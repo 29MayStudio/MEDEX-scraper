@@ -1,4 +1,4 @@
-import csv
+import json
 import datetime
 import string
 
@@ -43,30 +43,37 @@ class GenericItemInline(admin.TabularInline):
     model = Generic
 
 
-def export_to_csv(model_admin, request, queryset):
+def export_to_json(model_admin, request, queryset):
     opts = model_admin.model._meta
-    content_disposition = f'attachment; filename={opts.verbose_name}.csv'
-    response = HttpResponse(content_type='text/csv')
+    content_disposition = f'attachment; filename={opts.verbose_name_plural}.json'
+    response = HttpResponse(content_type='application/json')
     response['Content-Disposition'] = content_disposition
-    writer = csv.writer(response)
 
     fields = [field for field in opts.get_fields() if not field.many_to_many \
               and not field.one_to_many]
-    # Write a first row with header information
-    writer.writerow([field.verbose_name for field in fields])
-    # Write data rows
+
+    data = []
     for obj in queryset:
-        data_row = []
+        row = {}
         for field in fields:
             value = getattr(obj, field.name)
-            if isinstance(value, datetime.datetime):
-                value = value.strftime('%d/%m/%Y')
-            data_row.append(value)
-        writer.writerow(data_row)
+            if value is None:
+                row[field.name] = None
+            elif isinstance(value, (int, float, bool, str)):
+                row[field.name] = value
+            elif isinstance(value, datetime.datetime):
+                row[field.name] = value.strftime('%Y-%m-%d %H:%M:%S')
+            elif isinstance(value, datetime.date):
+                row[field.name] = value.strftime('%Y-%m-%d')
+            else:
+                row[field.name] = str(value)
+        data.append(row)
+
+    response.write(json.dumps(data, indent=4, ensure_ascii=False))
     return response
 
 
-export_to_csv.short_description = 'Export to CSV'
+export_to_json.short_description = 'Export to JSON'
 
 
 class GenericFilter(AutocompleteFilter):
@@ -83,7 +90,7 @@ class MedicineAdmin(admin.ModelAdmin):
     raw_id_fields = ('generic', 'manufacturer')
     date_hierarchy = 'created'
     ordering = ('created',)
-    actions = [export_to_csv]
+    actions = [export_to_json]
 
 
 @admin.register(Generic)
@@ -95,7 +102,7 @@ class GenericAdmin(admin.ModelAdmin):
     raw_id_fields = ('drug_class', 'indication')
     date_hierarchy = 'created'
     ordering = ('created',)
-    actions = [export_to_csv]
+    actions = [export_to_json]
     # readonly_fields = ('desc_count',) # add `desc_count` to list_display to display the number of descriptions
     # https://books.agiliq.com/projects/django-admin-cookbook/en/latest/filtering_calculated_fields.html
 
@@ -108,7 +115,7 @@ class ManufacturerAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('manufacturer_name',)}
     date_hierarchy = 'created'
     ordering = ('created',)
-    actions = [export_to_csv]
+    actions = [export_to_json]
     inlines = [MedicineItemInline]
 
 
@@ -120,7 +127,7 @@ class DosageFormAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('dosage_form_name',)}
     date_hierarchy = 'created'
     ordering = ('created',)
-    actions = [export_to_csv]
+    actions = [export_to_json]
 
 
 @admin.register(Indication)
@@ -131,7 +138,7 @@ class IndicationAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('indication_name',)}
     date_hierarchy = 'created'
     ordering = ('created',)
-    actions = [export_to_csv]
+    actions = [export_to_json]
     inlines = [GenericItemInline]
 
 
@@ -143,4 +150,4 @@ class DrugClassAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('drug_class_name',)}
     date_hierarchy = 'created'
     ordering = ('created',)
-    actions = [export_to_csv]
+    actions = [export_to_json]
