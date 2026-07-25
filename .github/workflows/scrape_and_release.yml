@@ -2,7 +2,7 @@ name: Scrape and Release Medex Data
 
 on:
   schedule:
-    - cron: '0 0 */7 * *' # Run every 7 days (52 times a year)
+    - cron: '0 0 * * 0' # Run every 7 days (every Sunday, exactly 52 times a year)
   workflow_dispatch: # Manual option to start the action workflow
 
 jobs:
