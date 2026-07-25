@@ -8,6 +8,8 @@ on:
 jobs:
   scrape_and_release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       SECRET_KEY: rgv8ni2^xx-3gn5h4=go_&*g-+)fu=6tkb1%v=#3g*_89at7#$
 
