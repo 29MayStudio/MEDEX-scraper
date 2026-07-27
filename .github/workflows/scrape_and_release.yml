@@ -72,9 +72,6 @@ jobs:
           python manage.py export_json medicine medicine_data
           python manage.py export_json generic generic_data
           python manage.py export_json manufacturer manufacturer_data
-          python manage.py export_json dosage_form dosage_form_data
-          python manage.py export_json drug_class drug_class_data
-          python manage.py export_json indication indication_data
 
       - name: Create Release and Upload JSON Assets
         uses: softprops/action-gh-release@v1
@@ -87,8 +84,5 @@ jobs:
             medicine_data.json
             generic_data.json
             manufacturer_data.json
-            dosage_form_data.json
-            drug_class_data.json
-            indication_data.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
