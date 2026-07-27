@@ -55,6 +55,12 @@ class Command(BaseCommand):
                     row[field.name] = value.strftime('%Y-%m-%d %H:%M:%S')
                 elif isinstance(value, datetime.date):
                     row[field.name] = value.strftime('%Y-%m-%d')
+                elif hasattr(value, '_meta'):
+                    row[field.name] = str(value)
+                    if field.name == 'generic':
+                        row['generic_id'] = getattr(value, 'generic_id', None)
+                    elif field.name == 'manufacturer':
+                        row['manufacturer_id'] = getattr(value, 'manufacturer_id', None)
                 else:
                     row[field.name] = str(value)
             data.append(row)
