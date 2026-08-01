@@ -396,3 +396,9 @@ fabric.properties
 # profiling data
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,pycharm
+
+# Scraper outputs
+brand_links.txt
+downloaded_pages/
+medex_data.json
+medex_html_pages.zip
